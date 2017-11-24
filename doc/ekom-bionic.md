@@ -450,5 +450,47 @@ Otherwise, it's not.
 
 
 
+Directives
+=====================
+
+Another word for extra attributes,
+except that those start with the **data-directive-** prefix (just trying to be a little bit more organized here).
+
+
+The first directive I'm glad to present is the following one:
+
+
+Form2Params
+-----------
+
+Syntax:
+
+```html
+
+<a href="#" class="bionic-btn"
+    data-action="updateMyGui"
+    data-directive-form2params="1"
+>A fake form submit button</a>
+```
+
+
+This directive will first collect all the controls of the parent form and put them as params 
+before executing the action (updateMyGui in this case).
+
+Note that the params are not written in the html (with data-param-xxx syntax), but they 
+are available to the programmatic world.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

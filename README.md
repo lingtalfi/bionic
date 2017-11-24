@@ -180,6 +180,10 @@ And so I recommend that you also investigate into ecp.
 History Log
 ------------------
     
+- 1.1.0 -- 2017-11-24
+
+    - add form2param directive
+    
 - 1.0.1 -- 2017-11-24
 
     - fix actionFunction not distinguishing between identifiers

@@ -445,6 +445,32 @@
 
 
                 //----------------------------------------
+                // DIRECTIVES
+                //----------------------------------------
+                if ("directive-" === name.substr(0, 10)) {
+                    var directiveName = name.substr(10);
+                    if ("form2params" === directiveName) {
+                        var jForm = jObj.closest("form");
+                        if (jForm.length) {
+                            var formParams = jForm.serializeObjectBionic();
+                            if (false === ('params' in data)) {
+                                data.params = {};
+                            }
+
+                            for (var i in formParams) {
+                                data.params[i] = formParams[i];
+                            }
+                        }
+                        else {
+                            devError("directive " + directiveName + ": parent form not found");
+                        }
+                    }
+                    else {
+                        devError("Unknown directiveName: " + directiveName);
+                    }
+                }
+
+                //----------------------------------------
                 // ATTACH THE VALUE TO THE COLLECTED ARRAY
                 //----------------------------------------
                 if ('param-' === name.substr(0, 6)) {
@@ -472,6 +498,8 @@
                 else {
                     data[name] = value;
                 }
+
+
             }
         });
         return data;
