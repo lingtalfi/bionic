@@ -193,7 +193,7 @@
     };
 
     function devError(msg) {
-        console.log("ekom-bionic error: " + msg);
+        console.log("bionic error: " + msg);
     }
 
     function take(paramName, params, defaultValue) {
@@ -230,27 +230,34 @@
                 if ("!" === action.substr(0, 1)) {
                     action = action.substr(1);
 
-                    var jForm = jObj.closest('form');
-                    if (jForm.length) {
-                        var currentParams = getUriParams();
-                        var method = jForm.attr('method');
-                        if ('undefined' === typeof method) {
-                            method = 'get';
-                        }
-                        method = method.toLowerCase();
-
-                        if ('get' === method) {
-
-                            var formData = jForm.serializeObjectBionic();
-                            if ('merge-with-uri-params' in data && "0" !== data['merge-with-uri-params']) {
-                                formData = $.extend(currentParams, formData);
+                    if ("post" === action) {
+                        var jForm = jObj.closest('form');
+                        if (jForm.length) {
+                            var currentParams = getUriParams();
+                            var method = jForm.attr('method');
+                            if ('undefined' === typeof method) {
+                                method = 'get';
                             }
-                            var queryString = $.param(formData);
-                            window.location.href = window.location.pathname + "?" + queryString;
+                            method = method.toLowerCase();
+
+                            if ('get' === method) {
+
+                                var formData = jForm.serializeObjectBionic();
+                                if ('merge-with-uri-params' in data && "0" !== data['merge-with-uri-params']) {
+                                    formData = $.extend(currentParams, formData);
+                                }
+                                var queryString = $.param(formData);
+                                window.location.href = window.location.pathname + "?" + queryString;
+                            }
+                            else {
+                                devError("This actionFunction does only work with form.get method for now");
+                                return;
+                            }
                         }
-                        else {
-                            devError("This actionFunction does only work with form.post method for now");
-                        }
+                    }
+                    else {
+                        devError("Unknown actionFunction: " + action);
+                        return;
                     }
                 }
 
@@ -258,43 +265,43 @@
                 //----------------------------------------
                 // regular handling
                 //----------------------------------------
-                else if ('params' in data) {
-                    var params = data.params;
-
-
-                    // nin shadow handling
-                    if ('ninshadow' in data) {
-                        var ninShadowTarget = data.ninshadow;
-                        if ('$' === ninShadowTarget.substr(0, 1)) {
-                            ninShadowTarget = ninShadowTarget.substr(1);
-                        }
-                        var jContext = jObj.closest('.bionic-context');
-                        var jNinShadowTarget = getTargetById(ninShadowTarget, jContext);
-
-                        if (jNinShadowTarget.length) {
-                            window.ninShadow = jNinShadowTarget;
-                        }
-                    }
-
-
-                    //----------------------------------------
-                    // handling intent
-                    //----------------------------------------
-                    var markers = collectPageMarkers();
-                    if (markers.length) {
-                        window.ekomIntent = markers;
-                    }
-
-                    //----------------------------------------
-                    // calling the action
-                    //----------------------------------------
-                    callable(jObj, action, params);
-
+                if (false === ('params' in data)) {
+                    data.params = {};
                 }
-                else {
-                    devError("params is not defined");
-                    console.log(data);
+
+
+                var params = data.params;
+
+
+                // nin shadow handling
+                if ('ninshadow' in data) {
+                    var ninShadowTarget = data.ninshadow;
+                    if ('$' === ninShadowTarget.substr(0, 1)) {
+                        ninShadowTarget = ninShadowTarget.substr(1);
+                    }
+                    var jContext = jObj.closest('.bionic-context');
+                    var jNinShadowTarget = getTargetById(ninShadowTarget, jContext);
+
+                    if (jNinShadowTarget.length) {
+                        window.ninShadow = jNinShadowTarget;
+                    }
                 }
+
+
+                //----------------------------------------
+                // handling intent
+                //----------------------------------------
+                var markers = collectPageMarkers();
+                if (markers.length) {
+                    window.ekomIntent = markers;
+                }
+
+                //----------------------------------------
+                // calling the action
+                //----------------------------------------
+                callable(jObj, action, params);
+
+
             }
             else {
                 devError("action is not defined");
