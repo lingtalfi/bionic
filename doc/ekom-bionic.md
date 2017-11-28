@@ -481,6 +481,25 @@ Note that the params are not written in the html (with data-param-xxx syntax), b
 are available to the programmatic world.
 
 
+StopPropagation
+-----------
+
+Syntax:
+
+```html
+
+<a href="#" class="bionic-btn"
+    data-action="updateMyGui"
+    data-directive-stop_propagation="1"
+>A fake form submit button</a>
+```
+
+
+This directive works if you have nested bionic elements only.
+This directive prevents bionic events set on the bionic element's parent(s) to propagate.
+
+
+
 
 
 

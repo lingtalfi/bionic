@@ -531,70 +531,9 @@
      * Note: there is a bug with this function:
      * a param starting with the underscore will not be collected (like _step for instance)
      */
-    // $.fn.serializeJSON = function () {
-    //
-    //     var self = this,
-    //         json = {},
-    //         push_counters = {},
-    //         patterns = {
-    //             "validate": /^[a-zA-Z][a-zA-Z0-9_]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
-    //             "key": /[a-zA-Z0-9_]+|(?=\[\])/g,
-    //             "push": /^$/,
-    //             "fixed": /^\d+$/,
-    //             "named": /^[a-zA-Z0-9_]+$/
-    //         };
-    //
-    //
-    //     this.build = function (base, key, value) {
-    //         base[key] = value;
-    //         return base;
-    //     };
-    //
-    //     this.push_counter = function (key) {
-    //         if (push_counters[key] === undefined) {
-    //             push_counters[key] = 0;
-    //         }
-    //         return push_counters[key]++;
-    //     };
-    //
-    //     $.each($(this).serializeArray(), function () {
-    //
-    //         // skip invalid keys
-    //         if (!patterns.validate.test(this.name)) {
-    //             return;
-    //         }
-    //
-    //         var k,
-    //             keys = this.name.match(patterns.key),
-    //             merge = this.value,
-    //             reverse_key = this.name;
-    //
-    //         while ((k = keys.pop()) !== undefined) {
-    //
-    //             // adjust reverse_key
-    //             reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
-    //
-    //             // push
-    //             if (k.match(patterns.push)) {
-    //                 merge = self.build({}, self.push_counter(reverse_key), merge);
-    //             }
-    //
-    //             // fixed
-    //             else if (k.match(patterns.fixed)) {
-    //                 merge = self.build({}, k, merge);
-    //             }
-    //
-    //             // named
-    //             else if (k.match(patterns.named)) {
-    //                 merge = self.build({}, k, merge);
-    //             }
-    //         }
-    //
-    //         json = $.extend(true, json, merge);
-    //     });
-    //
-    //     return json;
-    // };
+
+    var handleInteractionReturn = null;
+
 
     function devError(msg) {
         console.log("bionic error: " + msg);
@@ -759,6 +698,7 @@
         return jContext.find('.bionic-target[data-id="' + targetId + '"]');
     }
 
+
     function collectDataAttr(jObj) {
         var data = {};
         var jContext = null;
@@ -853,6 +793,7 @@
                 //----------------------------------------
                 if ("directive-" === name.substr(0, 10)) {
                     var directiveName = name.substr(10);
+
                     if ("form2params" === directiveName) {
                         var jForm = jObj.closest("form");
                         if (jForm.length) {
@@ -869,6 +810,9 @@
                         else {
                             devError("directive " + directiveName + ": parent form not found");
                         }
+                    }
+                    else if ("stop_propagation" === directiveName) {
+                        handleInteractionReturn = false;
                     }
                     else {
                         devError("Unknown directiveName: " + directiveName);
@@ -932,12 +876,12 @@
         return markers;
     }
 
+
     function handleInteraction(jBionicElement) {
         handleAction(jBionicElement, function (jObj, action, params) {
             try {
 
                 window.bionicActionHandler(jObj, action, params, take);
-
 
             }
             catch (err) {
@@ -960,11 +904,20 @@
         $(document).on('click.bionic', '.bionic-btn', function (e) {
             e.preventDefault();
             handleInteraction($(this));
+            if (false === handleInteractionReturn) {
+                return false;
+            }
+            handleInteractionReturn = null; // reset the next interaction
+
 
         });
         $(document).on('change.bionic', '.bionic-select', function (e) {
             e.preventDefault();
             handleInteraction($(this));
+            if (false === handleInteractionReturn) {
+                return false;
+            }
+            handleInteractionReturn = null; // reset the next interaction
         });
         $(document).on('change.bionic keyup.bionic', '.bionic-number', function (e) {
             e.preventDefault();
@@ -978,6 +931,10 @@
             var zis = $(this);
             delay(function () {
                 handleInteraction(zis);
+                if (false === handleInteractionReturn) {
+                    return false;
+                }
+                handleInteractionReturn = null; // reset the next interaction
             }, debounceTime);
         });
 
