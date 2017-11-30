@@ -533,6 +533,7 @@
      */
 
     var handleInteractionReturn = null;
+    var confirmInteractionMsg = null;
 
 
     function devError(msg) {
@@ -814,6 +815,10 @@
                     else if ("stop_propagation" === directiveName) {
                         handleInteractionReturn = false;
                     }
+                    else if ("confirm_msg" === directiveName) {
+                        var msg = value;
+                        confirmInteractionMsg = msg;
+                    }
                     else {
                         devError("Unknown directiveName: " + directiveName);
                     }
@@ -881,7 +886,15 @@
         handleAction(jBionicElement, function (jObj, action, params) {
             try {
 
-                window.bionicActionHandler(jObj, action, params, take);
+
+                var execute = true;
+                if (null !== confirmInteractionMsg) {
+                    execute = confirm(confirmInteractionMsg);
+                    confirmInteractionMsg = null;
+                }
+                if (true === execute) {
+                    window.bionicActionHandler(jObj, action, params, take);
+                }
 
             }
             catch (err) {

@@ -502,6 +502,27 @@ This directive prevents bionic events set on the bionic element's parent(s) to p
 
 
 
+ConfirmMsg
+-----------
+
+Syntax:
+
+```html
+
+<a href="#" class="bionic-btn"
+    data-action="updateMyGui"
+    data-directive-confirm_msg="Are you sure you want to do this?"
+>A fake form submit button</a>
+```
+
+
+This directive will wrap the bionic interaction within the js native confirm method.
+In other words, it will ask you to confirm the action before executing it. 
+
+
+
+
+
 
 
 

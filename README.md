@@ -180,6 +180,10 @@ And so I recommend that you also investigate into ecp.
 History Log
 ------------------
     
+- 1.4.0 -- 2017-11-30
+
+    - add data-directive-confirm_msg directive
+    
 - 1.3.0 -- 2017-11-28
 
     - add data-directive-stop_propagation directive
