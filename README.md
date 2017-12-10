@@ -180,6 +180,10 @@ And so I recommend that you also investigate into ecp.
 History Log
 ------------------
     
+- 1.5.0 -- 2017-12-10
+
+    - add data-directive-pdfdownload directive
+    
 - 1.4.0 -- 2017-11-30
 
     - add data-directive-confirm_msg directive

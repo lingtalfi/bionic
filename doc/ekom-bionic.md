@@ -523,6 +523,33 @@ In other words, it will ask you to confirm the action before executing it.
 
 
 
+pdfdownload
+-----------
+
+Syntax:
+
+```html
+
+<a href="/pdf/invoice/45" class="bionic-btn"
+    data-type="binary"
+    data-directive-pdfdownload="1"
+>A fake form submit button</a>
+```
+
+
+This directive will fetch the pdf binary data at the uri pointed by href (/pdf/invoice/45 in the example)
+and open the pdf in the browser.
+If you have ninShadowHelper object in the window scope (js), then it will call its start and end method,
+allowing you to hook an ajax loader system while the user waits for the download.
+
+Notice that the data-type is set to binary.
+By default, the data-type with bionic is ecp, but here we don't call an ecp service, but directly an arbitrary
+uri. Since this uri returns a pdf as binary data, then we need to set the data-type to binary. 
+
+
+
+
+
 
 
 
