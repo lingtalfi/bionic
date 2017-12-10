@@ -533,7 +533,8 @@ Syntax:
 <a href="/pdf/invoice/45" class="bionic-btn"
     data-type="binary"
     data-directive-pdfdownload="1"
->A fake form submit button</a>
+    data-name="My invoice"
+>Download the invoice</a>
 ```
 
 

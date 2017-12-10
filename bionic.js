@@ -658,6 +658,12 @@
             if (true === downloadAjaxPdf) {
                 downloadAjaxPdf = false;
 
+
+                var name = "pdf file";
+                if ('params' in data && 'name' in data.params) {
+                    name = data.params.name;
+                }
+
                 if ("ninShadowHelper" in window) {
                     window.ninShadowHelper.start();
                 }
@@ -676,7 +682,7 @@
                         var file = window.URL.createObjectURL(this.response);
                         var a = document.createElement("a");
                         a.href = file;
-                        a.download = this.response.name || "detailPDF";
+                        a.download = this.response.name || name;
                         document.body.appendChild(a);
                         if ("ninShadowHelper" in window) {
                             window.ninShadowHelper.end();
