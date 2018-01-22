@@ -533,6 +533,9 @@
      */
 
     var handleInteractionReturn = null;
+    var confirmInteractionMsg = null;
+    var downloadAjaxPdf = false;
+    var willReload = false;
 
 
     function devError(msg) {
@@ -649,6 +652,56 @@
             else {
                 devError("action is not defined");
                 console.log(data);
+            }
+        }
+        else if ('binary' === type) {
+            var data = collectDataAttr(jObj);
+            if (true === downloadAjaxPdf) {
+                downloadAjaxPdf = false;
+
+
+                var name = "pdf file";
+                if ('params' in data && 'name' in data.params) {
+                    name = data.params.name;
+                }
+
+                if ("ninShadowHelper" in window) {
+                    window.ninShadowHelper.start();
+                }
+
+                var href = jObj.attr("href");
+
+
+                // https://stackoverflow.com/questions/12876000/how-to-build-pdf-file-from-binary-string-returned-from-a-web-service-using-javas
+                var request = new XMLHttpRequest();
+                request.open("GET", href, true);
+                request.responseType = "blob";
+                request.onload = function (e) {
+                    if (this.status === 200) {
+                        // `blob` response
+                        // create `objectURL` of `this.response` : `.pdf` as `Blob`
+                        var file = window.URL.createObjectURL(this.response);
+                        var a = document.createElement("a");
+                        a.href = file;
+                        a.download = this.response.name || name;
+                        document.body.appendChild(a);
+                        if ("ninShadowHelper" in window) {
+                            window.ninShadowHelper.end();
+                        }
+                        a.click();
+                        // remove `a` following `Save As` dialog,
+                        // `window` regains `focus`
+                        window.onfocus = function () {
+                            if (a.parentNode === document.body) {
+                                document.body.removeChild(a);
+                            }
+                        }
+                    }
+                };
+                request.send();
+            }
+            else {
+                devError("Don't know how to handle binary type")
             }
         }
         else {
@@ -814,6 +867,16 @@
                     else if ("stop_propagation" === directiveName) {
                         handleInteractionReturn = false;
                     }
+                    else if ("confirm_msg" === directiveName) {
+                        var msg = value;
+                        confirmInteractionMsg = msg;
+                    }
+                    else if ("pdfdownload" === directiveName) {
+                        downloadAjaxPdf = true;
+                    }
+                    else if ("reload" === directiveName) {
+                        willReload = true;
+                    }
                     else {
                         devError("Unknown directiveName: " + directiveName);
                     }
@@ -881,7 +944,15 @@
         handleAction(jBionicElement, function (jObj, action, params) {
             try {
 
-                window.bionicActionHandler(jObj, action, params, take);
+
+                var execute = true;
+                if (null !== confirmInteractionMsg) {
+                    execute = confirm(confirmInteractionMsg);
+                    confirmInteractionMsg = null;
+                }
+                if (true === execute) {
+                    window.bionicActionHandler(jObj, action, params, take);
+                }
 
             }
             catch (err) {
@@ -909,6 +980,11 @@
             }
             handleInteractionReturn = null; // reset the next interaction
 
+            if (true === willReload) {
+                willReload = false;
+                window.location.reload();
+            }
+
 
         });
         $(document).on('change.bionic', '.bionic-select', function (e) {
@@ -918,6 +994,11 @@
                 return false;
             }
             handleInteractionReturn = null; // reset the next interaction
+
+            if (true === willReload) {
+                willReload = false;
+                window.location.reload();
+            }
         });
         $(document).on('change.bionic keyup.bionic', '.bionic-number', function (e) {
             e.preventDefault();
@@ -936,6 +1017,12 @@
                 }
                 handleInteractionReturn = null; // reset the next interaction
             }, debounceTime);
+
+            if (true === willReload) {
+                willReload = false;
+                window.location.reload();
+            }
+
         });
 
     });

@@ -501,6 +501,24 @@ This directive prevents bionic events set on the bionic element's parent(s) to p
 
 
 
+Reload
+-----------
+
+Syntax:
+
+```html
+
+<a href="#" class="bionic-btn"
+    data-action="updateMyGui"
+    data-directive-reload="1"
+>I'm a link</a>
+```
+
+This directive reloads the page after the action (updateMyGui in this case) is executed.
+
+
+
+
 
 
 

@@ -180,6 +180,10 @@ And so I recommend that you also investigate into ecp.
 History Log
 ------------------
     
+- 1.4.0 -- 2018-01-22
+
+    - add data-directive-reload directive
+    
 - 1.3.0 -- 2017-11-28
 
     - add data-directive-stop_propagation directive
