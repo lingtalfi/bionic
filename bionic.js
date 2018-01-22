@@ -537,6 +537,27 @@
     var downloadAjaxPdf = false;
     var willReload = false;
 
+    /**
+     * global utility than one can use.
+     * Example of use:
+     *
+     * In the file where you override "window.bionicActionHandler",
+     * do the following:
+     *
+     * var api = ekomApi.inst(); // ekom is an application module's api...
+     *
+     * window.ekomRequestOnSuccessAfter = function () { //...and we can hook here to all ekom ajax request's onSuccess action
+     *    window.bionicOnActionAfter();
+     * };
+     *
+     *
+     */
+    window.bionicOnActionAfter = function () {
+        if (true === willReload) {
+            willReload = false;
+            window.location.reload();
+        }
+    };
 
     function devError(msg) {
         console.log("bionic error: " + msg);
@@ -941,6 +962,8 @@
 
 
     function handleInteraction(jBionicElement) {
+
+
         handleAction(jBionicElement, function (jObj, action, params) {
             try {
 
@@ -963,6 +986,8 @@
 
 
     $(document).ready(function () {
+
+
         var delay = (function () {
             var timer = 0;
             return function (callback, ms) {
@@ -979,13 +1004,6 @@
                 return false;
             }
             handleInteractionReturn = null; // reset the next interaction
-
-            if (true === willReload) {
-                willReload = false;
-                window.location.reload();
-            }
-
-
         });
         $(document).on('change.bionic', '.bionic-select', function (e) {
             e.preventDefault();
@@ -994,11 +1012,6 @@
                 return false;
             }
             handleInteractionReturn = null; // reset the next interaction
-
-            if (true === willReload) {
-                willReload = false;
-                window.location.reload();
-            }
         });
         $(document).on('change.bionic keyup.bionic', '.bionic-number', function (e) {
             e.preventDefault();
@@ -1017,12 +1030,6 @@
                 }
                 handleInteractionReturn = null; // reset the next interaction
             }, debounceTime);
-
-            if (true === willReload) {
-                willReload = false;
-                window.location.reload();
-            }
-
         });
 
     });

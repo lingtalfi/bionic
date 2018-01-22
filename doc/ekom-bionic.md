@@ -515,6 +515,11 @@ Syntax:
 ```
 
 This directive reloads the page after the action (updateMyGui in this case) is executed.
+Watch out, this directive only works if you call the window.bionicOnActionAfter method.
+
+That's because, reloading the page is mostly (to my experience) useful after calling
+a webservice in an async way. And so the onSuccess callback can only be called by the client (you):
+the bionic object has no way to guess when the onSuccess callback should be called.
 
 
 
